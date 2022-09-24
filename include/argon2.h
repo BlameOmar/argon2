@@ -22,6 +22,40 @@
 #include <stddef.h>
 #include <limits.h>
 
+// Swift API
+#ifdef __nonnull
+#define ARGON2_SWIFT_NONNULL __nonnull
+#else
+#define ARGON2_SWIFT_NONNULL
+#endif
+
+#ifdef __nullable
+#define ARGON2_SWIFT_NULLABLE __nullable
+#else
+#define ARGON2_SWIFT_NULLABLE
+#endif
+
+#ifdef __has_attribute
+#if __has_attribute (__swift_name__)
+#define ARGON2_SWIFT_NAME(x) __attribute__((__swift_name__(x)))
+#else
+#define ARGON2_SWIFT_NAME(x)
+#endif
+#else
+#define ARGON2_SWIFT_NAME(x)
+#endif
+
+// Enums
+#ifdef __has_attribute
+#if __has_attribute (enum_extensibility)
+#define ARGON2_CLOSED_ENUM enum __attribute__((enum_extensibility(closed)))
+#else
+#define ARGON2_CLOSED_ENUM enum
+#endif
+#else
+#define ARGON2_CLOSED_ENUM enum
+#endif
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -97,69 +131,88 @@ extern "C" {
 extern int FLAG_clear_internal_memory;
 
 /* Error codes */
-typedef enum Argon2_ErrorCodes {
-    ARGON2_OK = 0,
+typedef ARGON2_CLOSED_ENUM Argon2_ErrorCodes {
+    ARGON2_OK ARGON2_SWIFT_NAME("ok") = 0,
 
-    ARGON2_OUTPUT_PTR_NULL = -1,
+    ARGON2_OUTPUT_PTR_NULL ARGON2_SWIFT_NAME("outputPointerNull") = -1,
 
-    ARGON2_OUTPUT_TOO_SHORT = -2,
-    ARGON2_OUTPUT_TOO_LONG = -3,
+    ARGON2_OUTPUT_TOO_SHORT ARGON2_SWIFT_NAME("outputTooShort") = -2,
+    ARGON2_OUTPUT_TOO_LONG ARGON2_SWIFT_NAME("outputTooLong") = -3,
 
-    ARGON2_PWD_TOO_SHORT = -4,
-    ARGON2_PWD_TOO_LONG = -5,
+    ARGON2_PWD_TOO_SHORT ARGON2_SWIFT_NAME("passwordTooShort") = -4,
+    ARGON2_PWD_TOO_LONG ARGON2_SWIFT_NAME("passwordTooLong") = -5,
 
-    ARGON2_SALT_TOO_SHORT = -6,
-    ARGON2_SALT_TOO_LONG = -7,
+    ARGON2_SALT_TOO_SHORT ARGON2_SWIFT_NAME("saltTooShort") = -6,
+    ARGON2_SALT_TOO_LONG ARGON2_SWIFT_NAME("saltTooLong") = -7,
 
-    ARGON2_AD_TOO_SHORT = -8,
-    ARGON2_AD_TOO_LONG = -9,
+    ARGON2_AD_TOO_SHORT ARGON2_SWIFT_NAME("additionalDataTooShort") = -8,
+    ARGON2_AD_TOO_LONG ARGON2_SWIFT_NAME("additionalDataTooLong") = -9,
 
-    ARGON2_SECRET_TOO_SHORT = -10,
-    ARGON2_SECRET_TOO_LONG = -11,
+    ARGON2_SECRET_TOO_SHORT ARGON2_SWIFT_NAME("secretTooShort") = -10,
+    ARGON2_SECRET_TOO_LONG ARGON2_SWIFT_NAME("secretTooLong") = -11,
 
-    ARGON2_TIME_TOO_SMALL = -12,
-    ARGON2_TIME_TOO_LARGE = -13,
+    ARGON2_TIME_TOO_SMALL ARGON2_SWIFT_NAME("timeCostTooSmall") = -12,
+    ARGON2_TIME_TOO_LARGE ARGON2_SWIFT_NAME("timeCostTooLarge") = -13,
 
-    ARGON2_MEMORY_TOO_LITTLE = -14,
-    ARGON2_MEMORY_TOO_MUCH = -15,
+    ARGON2_MEMORY_TOO_LITTLE ARGON2_SWIFT_NAME("memoryCostTooSmall") = -14,
+    ARGON2_MEMORY_TOO_MUCH ARGON2_SWIFT_NAME("memoryCostTooLarge") = -15,
 
-    ARGON2_LANES_TOO_FEW = -16,
-    ARGON2_LANES_TOO_MANY = -17,
+    ARGON2_LANES_TOO_FEW ARGON2_SWIFT_NAME("tooFewLanes") = -16,
+    ARGON2_LANES_TOO_MANY ARGON2_SWIFT_NAME("tooManyLanes") = -17,
 
-    ARGON2_PWD_PTR_MISMATCH = -18,    /* NULL ptr with non-zero length */
-    ARGON2_SALT_PTR_MISMATCH = -19,   /* NULL ptr with non-zero length */
-    ARGON2_SECRET_PTR_MISMATCH = -20, /* NULL ptr with non-zero length */
-    ARGON2_AD_PTR_MISMATCH = -21,     /* NULL ptr with non-zero length */
+    /* NULL ptr with non-zero length */
+    ARGON2_PWD_PTR_MISMATCH \
+        ARGON2_SWIFT_NAME("passwordPointerUnexpectedlyNull") = -18,
+    
+    /* NULL ptr with non-zero length */
+    ARGON2_SALT_PTR_MISMATCH \
+        ARGON2_SWIFT_NAME("saltPointerUnexpectedlyNull") = -19,
+    
+    /* NULL ptr with non-zero length */
+    ARGON2_SECRET_PTR_MISMATCH \
+        ARGON2_SWIFT_NAME("secretPointerUnexpectedlyNull") = -20,
+    
+    /* NULL ptr with non-zero length */
+    ARGON2_AD_PTR_MISMATCH \
+        ARGON2_SWIFT_NAME("additionalDataPointerUnexpectedlyNull") = -21,
 
-    ARGON2_MEMORY_ALLOCATION_ERROR = -22,
+    ARGON2_MEMORY_ALLOCATION_ERROR \
+        ARGON2_SWIFT_NAME("failedToAllocateMemory") = -22,
 
-    ARGON2_FREE_MEMORY_CBK_NULL = -23,
-    ARGON2_ALLOCATE_MEMORY_CBK_NULL = -24,
+    ARGON2_FREE_MEMORY_CBK_NULL \
+        ARGON2_SWIFT_NAME("deallocatorFunctionMissing") = -23,
+    ARGON2_ALLOCATE_MEMORY_CBK_NULL \
+        ARGON2_SWIFT_NAME("allocatorFunctionMissing") = -24,
 
-    ARGON2_INCORRECT_PARAMETER = -25,
-    ARGON2_INCORRECT_TYPE = -26,
+    ARGON2_INCORRECT_PARAMETER ARGON2_SWIFT_NAME("InvalidArgument") = -25,
+    ARGON2_INCORRECT_TYPE ARGON2_SWIFT_NAME("InvalidType") = -26,
 
-    ARGON2_OUT_PTR_MISMATCH = -27,
+    ARGON2_OUT_PTR_MISMATCH \
+        ARGON2_SWIFT_NAME("outputPointerUnexpectedlyNull") = -27,
 
-    ARGON2_THREADS_TOO_FEW = -28,
-    ARGON2_THREADS_TOO_MANY = -29,
+    ARGON2_THREADS_TOO_FEW ARGON2_SWIFT_NAME("tooFewThreads") = -28,
+    ARGON2_THREADS_TOO_MANY ARGON2_SWIFT_NAME("tooManyThreads") = -29,
 
-    ARGON2_MISSING_ARGS = -30,
+    ARGON2_MISSING_ARGS ARGON2_SWIFT_NAME("missingArguments") = -30,
 
-    ARGON2_ENCODING_FAIL = -31,
+    ARGON2_ENCODING_FAIL ARGON2_SWIFT_NAME("encodingFailure") = -31,
 
-    ARGON2_DECODING_FAIL = -32,
+    ARGON2_DECODING_FAIL ARGON2_SWIFT_NAME("decodingFailure") = -32,
 
-    ARGON2_THREAD_FAIL = -33,
+    ARGON2_THREAD_FAIL ARGON2_SWIFT_NAME("threadFailure") = -33,
 
-    ARGON2_DECODING_LENGTH_FAIL = -34,
+    ARGON2_DECODING_LENGTH_FAIL ARGON2_SWIFT_NAME("decodingLengthFail") = -34,
 
-    ARGON2_VERIFY_MISMATCH = -35
-} argon2_error_codes;
+    ARGON2_VERIFY_MISMATCH ARGON2_SWIFT_NAME("passwordDoesNotMatch") = -35
+} ARGON2_SWIFT_NAME("Argon2Status") argon2_error_codes;
 
 /* Memory allocator types --- for external allocation */
-typedef int (*allocate_fptr)(uint8_t **memory, size_t bytes_to_allocate);
-typedef void (*deallocate_fptr)(uint8_t *memory, size_t bytes_to_allocate);
+typedef int (*allocate_fptr)
+(uint8_t * ARGON2_SWIFT_NULLABLE * ARGON2_SWIFT_NONNULL memory,
+ size_t bytes_to_allocate);
+
+typedef void (*deallocate_fptr)(uint8_t * ARGON2_SWIFT_NONNULL memory,
+                                size_t bytes_to_allocate);
 
 /* Argon2 external data structures */
 
@@ -189,19 +242,19 @@ typedef void (*deallocate_fptr)(uint8_t *memory, size_t bytes_to_allocate);
  Argon2_Context(out,8,pwd,32,salt,16,NULL,0,NULL,0,5,1<<20,4,4,NULL,NULL,true,false,false,false)
  */
 typedef struct Argon2_Context {
-    uint8_t *out;    /* output array */
+    uint8_t * ARGON2_SWIFT_NONNULL out;    /* output array */
     uint32_t outlen; /* digest length */
 
-    uint8_t *pwd;    /* password array */
+    uint8_t * ARGON2_SWIFT_NONNULL pwd;    /* password array */
     uint32_t pwdlen; /* password length */
 
-    uint8_t *salt;    /* salt array */
+    uint8_t * ARGON2_SWIFT_NONNULL salt;    /* salt array */
     uint32_t saltlen; /* salt length */
 
-    uint8_t *secret;    /* key array */
+    uint8_t * ARGON2_SWIFT_NULLABLE secret;    /* key array */
     uint32_t secretlen; /* key length */
 
-    uint8_t *ad;    /* associated data array */
+    uint8_t * ARGON2_SWIFT_NULLABLE ad;    /* associated data array */
     uint32_t adlen; /* associated data length */
 
     uint32_t t_cost;  /* number of passes */
@@ -211,25 +264,28 @@ typedef struct Argon2_Context {
 
     uint32_t version; /* version number */
 
-    allocate_fptr allocate_cbk; /* pointer to memory allocator */
-    deallocate_fptr free_cbk;   /* pointer to memory deallocator */
+    /* pointer to memory allocator */
+    allocate_fptr ARGON2_SWIFT_NULLABLE allocate_cbk;
+    
+    /* pointer to memory deallocator */
+    deallocate_fptr ARGON2_SWIFT_NULLABLE free_cbk;
 
     uint32_t flags; /* array of bool options */
 } argon2_context;
 
 /* Argon2 primitive type */
-typedef enum Argon2_type {
-  Argon2_d = 0,
-  Argon2_i = 1,
-  Argon2_id = 2
-} argon2_type;
+typedef ARGON2_CLOSED_ENUM Argon2_type {
+  Argon2_d ARGON2_SWIFT_NAME("argon2d") = 0,
+  Argon2_i ARGON2_SWIFT_NAME("argon2i") = 1,
+  Argon2_id ARGON2_SWIFT_NAME("argon2id") = 2
+} ARGON2_SWIFT_NAME("Argon2Type") argon2_type;
 
 /* Version of the algorithm */
-typedef enum Argon2_version {
-    ARGON2_VERSION_10 = 0x10,
-    ARGON2_VERSION_13 = 0x13,
-    ARGON2_VERSION_NUMBER = ARGON2_VERSION_13
-} argon2_version;
+typedef ARGON2_CLOSED_ENUM Argon2_version {
+    ARGON2_VERSION_10 ARGON2_SWIFT_NAME("version10") = 0x10,
+    ARGON2_VERSION_13 ARGON2_SWIFT_NAME("version13") = 0x13,
+    ARGON2_VERSION_NUMBER ARGON2_SWIFT_NAME("latestVersion") = ARGON2_VERSION_13
+} ARGON2_SWIFT_NAME("Argon2Version") argon2_version;
 
 /*
  * Function that gives the string representation of an argon2_type.
@@ -237,14 +293,17 @@ typedef enum Argon2_version {
  * @param uppercase Whether the string should have the first letter uppercase
  * @return NULL if invalid type, otherwise the string representation.
  */
-ARGON2_PUBLIC const char *argon2_type2string(argon2_type type, int uppercase);
+ARGON2_PUBLIC
+const char * ARGON2_SWIFT_NULLABLE argon2_type2string(argon2_type type,
+                                                      int uppercase);
 
 /*
  * Function that performs memory-hard hashing with certain degree of parallelism
  * @param  context  Pointer to the Argon2 internal structure
  * @return Error code if smth is wrong, ARGON2_OK otherwise
  */
-ARGON2_PUBLIC int argon2_ctx(argon2_context *context, argon2_type type);
+ARGON2_PUBLIC int argon2_ctx(argon2_context * ARGON2_SWIFT_NONNULL context,
+                             argon2_type type);
 
 /**
  * Hashes a password with Argon2i, producing an encoded hash
@@ -264,9 +323,12 @@ ARGON2_PUBLIC int argon2_ctx(argon2_context *context, argon2_type type);
 ARGON2_PUBLIC int argon2i_hash_encoded(const uint32_t t_cost,
                                        const uint32_t m_cost,
                                        const uint32_t parallelism,
-                                       const void *pwd, const size_t pwdlen,
-                                       const void *salt, const size_t saltlen,
-                                       const size_t hashlen, char *encoded,
+                                       const void * ARGON2_SWIFT_NONNULL pwd,
+                                       const size_t pwdlen,
+                                       const void * ARGON2_SWIFT_NONNULL salt,
+                                       const size_t saltlen,
+                                       const size_t hashlen,
+                                       char * ARGON2_SWIFT_NONNULL encoded,
                                        const size_t encodedlen);
 
 /**
@@ -283,48 +345,71 @@ ARGON2_PUBLIC int argon2i_hash_encoded(const uint32_t t_cost,
  * @pre   Different parallelism levels will give different results
  * @pre   Returns ARGON2_OK if successful
  */
-ARGON2_PUBLIC int argon2i_hash_raw(const uint32_t t_cost, const uint32_t m_cost,
-                                   const uint32_t parallelism, const void *pwd,
-                                   const size_t pwdlen, const void *salt,
-                                   const size_t saltlen, void *hash,
+ARGON2_PUBLIC int argon2i_hash_raw(const uint32_t t_cost,
+                                   const uint32_t m_cost,
+                                   const uint32_t parallelism,
+                                   const void * ARGON2_SWIFT_NONNULL pwd,
+                                   const size_t pwdlen,
+                                   const void * ARGON2_SWIFT_NONNULL salt,
+                                   const size_t saltlen,
+                                   void * ARGON2_SWIFT_NONNULL hash,
                                    const size_t hashlen);
 
 ARGON2_PUBLIC int argon2d_hash_encoded(const uint32_t t_cost,
                                        const uint32_t m_cost,
                                        const uint32_t parallelism,
-                                       const void *pwd, const size_t pwdlen,
-                                       const void *salt, const size_t saltlen,
-                                       const size_t hashlen, char *encoded,
+                                       const void * ARGON2_SWIFT_NONNULL pwd,
+                                       const size_t pwdlen,
+                                       const void * ARGON2_SWIFT_NONNULL salt,
+                                       const size_t saltlen,
+                                       const size_t hashlen,
+                                       char * ARGON2_SWIFT_NONNULL encoded,
                                        const size_t encodedlen);
 
-ARGON2_PUBLIC int argon2d_hash_raw(const uint32_t t_cost, const uint32_t m_cost,
-                                   const uint32_t parallelism, const void *pwd,
-                                   const size_t pwdlen, const void *salt,
-                                   const size_t saltlen, void *hash,
+ARGON2_PUBLIC int argon2d_hash_raw(const uint32_t t_cost,
+                                   const uint32_t m_cost,
+                                   const uint32_t parallelism,
+                                   const void * ARGON2_SWIFT_NONNULL pwd,
+                                   const size_t pwdlen,
+                                   const void * ARGON2_SWIFT_NONNULL salt,
+                                   const size_t saltlen,
+                                   void * ARGON2_SWIFT_NONNULL hash,
                                    const size_t hashlen);
 
 ARGON2_PUBLIC int argon2id_hash_encoded(const uint32_t t_cost,
                                         const uint32_t m_cost,
                                         const uint32_t parallelism,
-                                        const void *pwd, const size_t pwdlen,
-                                        const void *salt, const size_t saltlen,
-                                        const size_t hashlen, char *encoded,
+                                        const void * ARGON2_SWIFT_NONNULL pwd,
+                                        const size_t pwdlen,
+                                        const void * ARGON2_SWIFT_NONNULL salt,
+                                        const size_t saltlen,
+                                        const size_t hashlen,
+                                        char * ARGON2_SWIFT_NONNULL encoded,
                                         const size_t encodedlen);
 
 ARGON2_PUBLIC int argon2id_hash_raw(const uint32_t t_cost,
                                     const uint32_t m_cost,
-                                    const uint32_t parallelism, const void *pwd,
-                                    const size_t pwdlen, const void *salt,
-                                    const size_t saltlen, void *hash,
+                                    const uint32_t parallelism,
+                                    const void * ARGON2_SWIFT_NONNULL pwd,
+                                    const size_t pwdlen,
+                                    const void * ARGON2_SWIFT_NONNULL salt,
+                                    const size_t saltlen,
+                                    void * ARGON2_SWIFT_NONNULL hash,
                                     const size_t hashlen);
 
 /* generic function underlying the above ones */
-ARGON2_PUBLIC int argon2_hash(const uint32_t t_cost, const uint32_t m_cost,
-                              const uint32_t parallelism, const void *pwd,
-                              const size_t pwdlen, const void *salt,
-                              const size_t saltlen, void *hash,
-                              const size_t hashlen, char *encoded,
-                              const size_t encodedlen, argon2_type type,
+ARGON2_PUBLIC int argon2_hash(const uint32_t t_cost,
+                              const uint32_t m_cost,
+                              const uint32_t parallelism,
+                              const void * ARGON2_SWIFT_NONNULL pwd,
+                              const size_t pwdlen,
+                              const void * ARGON2_SWIFT_NONNULL salt,
+                              const size_t saltlen,
+                              void * ARGON2_SWIFT_NULLABLE hash,
+                              const size_t hashlen,
+                              char * ARGON2_SWIFT_NULLABLE encoded,
+                              const size_t encodedlen,
+                              argon2_type type,
                               const uint32_t version);
 
 /**
@@ -334,17 +419,21 @@ ARGON2_PUBLIC int argon2_hash(const uint32_t t_cost, const uint32_t m_cost,
  * @param pwd Pointer to password
  * @pre   Returns ARGON2_OK if successful
  */
-ARGON2_PUBLIC int argon2i_verify(const char *encoded, const void *pwd,
+ARGON2_PUBLIC int argon2i_verify(const char * ARGON2_SWIFT_NONNULL encoded,
+                                 const void * ARGON2_SWIFT_NONNULL pwd,
                                  const size_t pwdlen);
 
-ARGON2_PUBLIC int argon2d_verify(const char *encoded, const void *pwd,
+ARGON2_PUBLIC int argon2d_verify(const char * ARGON2_SWIFT_NONNULL encoded,
+                                 const void * ARGON2_SWIFT_NONNULL pwd,
                                  const size_t pwdlen);
 
-ARGON2_PUBLIC int argon2id_verify(const char *encoded, const void *pwd,
+ARGON2_PUBLIC int argon2id_verify(const char * ARGON2_SWIFT_NONNULL encoded,
+                                  const void * ARGON2_SWIFT_NONNULL pwd,
                                   const size_t pwdlen);
 
 /* generic function underlying the above ones */
-ARGON2_PUBLIC int argon2_verify(const char *encoded, const void *pwd,
+ARGON2_PUBLIC int argon2_verify(const char * ARGON2_SWIFT_NONNULL encoded,
+                                const void * ARGON2_SWIFT_NONNULL pwd,
                                 const size_t pwdlen, argon2_type type);
 
 /**
@@ -355,7 +444,7 @@ ARGON2_PUBLIC int argon2_verify(const char *encoded, const void *pwd,
  * @param  context  Pointer to current Argon2 context
  * @return  Zero if successful, a non zero error code otherwise
  */
-ARGON2_PUBLIC int argon2d_ctx(argon2_context *context);
+ARGON2_PUBLIC int argon2d_ctx(argon2_context * ARGON2_SWIFT_NONNULL context);
 
 /**
  * Argon2i: Version of Argon2 that picks memory blocks
@@ -365,7 +454,7 @@ ARGON2_PUBLIC int argon2d_ctx(argon2_context *context);
  * @param  context  Pointer to current Argon2 context
  * @return  Zero if successful, a non zero error code otherwise
  */
-ARGON2_PUBLIC int argon2i_ctx(argon2_context *context);
+ARGON2_PUBLIC int argon2i_ctx(argon2_context * ARGON2_SWIFT_NONNULL context);
 
 /**
  * Argon2id: Version of Argon2 where the first half-pass over memory is
@@ -376,7 +465,7 @@ ARGON2_PUBLIC int argon2i_ctx(argon2_context *context);
  * @param  context  Pointer to current Argon2 context
  * @return  Zero if successful, a non zero error code otherwise
  */
-ARGON2_PUBLIC int argon2id_ctx(argon2_context *context);
+ARGON2_PUBLIC int argon2id_ctx(argon2_context * ARGON2_SWIFT_NONNULL context);
 
 /**
  * Verify if a given password is correct for Argon2d hashing
@@ -385,7 +474,9 @@ ARGON2_PUBLIC int argon2id_ctx(argon2_context *context);
  * specified by the context outlen member
  * @return  Zero if successful, a non zero error code otherwise
  */
-ARGON2_PUBLIC int argon2d_verify_ctx(argon2_context *context, const char *hash);
+ARGON2_PUBLIC
+int argon2d_verify_ctx(argon2_context * ARGON2_SWIFT_NONNULL context,
+                       const char * ARGON2_SWIFT_NONNULL hash);
 
 /**
  * Verify if a given password is correct for Argon2i hashing
@@ -394,7 +485,9 @@ ARGON2_PUBLIC int argon2d_verify_ctx(argon2_context *context, const char *hash);
  * specified by the context outlen member
  * @return  Zero if successful, a non zero error code otherwise
  */
-ARGON2_PUBLIC int argon2i_verify_ctx(argon2_context *context, const char *hash);
+ARGON2_PUBLIC
+int argon2i_verify_ctx(argon2_context * ARGON2_SWIFT_NONNULL context,
+                       const char * ARGON2_SWIFT_NONNULL hash);
 
 /**
  * Verify if a given password is correct for Argon2id hashing
@@ -403,18 +496,22 @@ ARGON2_PUBLIC int argon2i_verify_ctx(argon2_context *context, const char *hash);
  * specified by the context outlen member
  * @return  Zero if successful, a non zero error code otherwise
  */
-ARGON2_PUBLIC int argon2id_verify_ctx(argon2_context *context,
-                                      const char *hash);
+ARGON2_PUBLIC
+int argon2id_verify_ctx(argon2_context * ARGON2_SWIFT_NONNULL context,
+                        const char * ARGON2_SWIFT_NONNULL hash);
 
 /* generic function underlying the above ones */
-ARGON2_PUBLIC int argon2_verify_ctx(argon2_context *context, const char *hash,
-                                    argon2_type type);
+ARGON2_PUBLIC
+int argon2_verify_ctx(argon2_context * ARGON2_SWIFT_NONNULL context,
+                      const char * ARGON2_SWIFT_NONNULL hash,
+                      argon2_type type);
 
 /**
  * Get the associated error message for given error code
  * @return  The error message associated with the given error code
  */
-ARGON2_PUBLIC const char *argon2_error_message(int error_code);
+ARGON2_PUBLIC
+const char * ARGON2_SWIFT_NONNULL argon2_error_message(int error_code);
 
 /**
  * Returns the encoded hash length for the given input parameters
