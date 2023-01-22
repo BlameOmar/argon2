@@ -22,37 +22,19 @@
 #include <stddef.h>
 #include <limits.h>
 
-// Swift API
-#ifdef _Nonnull
+// Improve Swift API
+// _Nonnull and _Nullable are specifiers, not attributes, and there doesn't appear to be a way to test specifically for
+// their support. However, the Swift toolchain always uses clang (which supports these specifiers), so we test for that
+// here even though this isn't best practice in general.
+#ifdef __clang__
 #define ARGON2_SWIFT_NONNULL _Nonnull
-#else
-#define ARGON2_SWIFT_NONNULL
-#endif
-
-#ifdef _Nullable
 #define ARGON2_SWIFT_NULLABLE _Nullable
-#else
-#define ARGON2_SWIFT_NULLABLE
-#endif
-
-#ifdef __has_attribute
-#if __has_attribute (__swift_name__)
 #define ARGON2_SWIFT_NAME(x) __attribute__((__swift_name__(x)))
-#else
-#define ARGON2_SWIFT_NAME(x)
-#endif
-#else
-#define ARGON2_SWIFT_NAME(x)
-#endif
-
-// Enums
-#ifdef __has_attribute
-#if __has_attribute (enum_extensibility)
 #define ARGON2_CLOSED_ENUM enum __attribute__((enum_extensibility(closed)))
 #else
-#define ARGON2_CLOSED_ENUM enum
-#endif
-#else
+#define ARGON2_SWIFT_NONNULL
+#define ARGON2_SWIFT_NULLABLE
+#define ARGON2_SWIFT_NAME(x)
 #define ARGON2_CLOSED_ENUM enum
 #endif
 
