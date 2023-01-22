@@ -23,14 +23,14 @@
 #include <limits.h>
 
 // Swift API
-#ifdef __nonnull
-#define ARGON2_SWIFT_NONNULL __nonnull
+#ifdef _Nonnull
+#define ARGON2_SWIFT_NONNULL _Nonnull
 #else
 #define ARGON2_SWIFT_NONNULL
 #endif
 
-#ifdef __nullable
-#define ARGON2_SWIFT_NULLABLE __nullable
+#ifdef _Nullable
+#define ARGON2_SWIFT_NULLABLE _Nullable
 #else
 #define ARGON2_SWIFT_NULLABLE
 #endif
